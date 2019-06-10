@@ -1,10 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "/home/govind/development/first_app/build/app/intermediates/incremental/mergeDebugResources/merged.dir/values/values.xml",
+            "outputFile": "/home/govind/development/flutter-app-for-practice/build/app/intermediates/incremental/mergeDebugResources/merged.dir/values/values.xml",
             "map": [
                 {
-                    "source": "/home/govind/development/first_app/android/app/src/main/res/values/styles.xml",
+                    "source": "/home/govind/development/flutter-app-for-practice/android/app/src/main/res/values/styles.xml",
                     "from": {
                         "startLines": "2",
                         "startColumns": "4",

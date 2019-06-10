@@ -1,16 +1,13 @@
 import 'package:flutter/material.dart';
 
+import '../scoped-models/main.dart';
 import './product_edit.dart';
 import './product_list.dart';
+import '../widget/ui_elements/logout_list_tile.dart';
 
 class ProductAdminPage extends StatelessWidget {
-  final Function addProduct;
-  final Function updateProduct;
-  final Function deleteProduct;
-
-  final List<Map<String, dynamic>> products;
-
-  ProductAdminPage(this.addProduct, this.updateProduct, this.deleteProduct, this.products);
+  final MainModel model;
+  ProductAdminPage(this.model);
 
   Widget _buildNavigaionDrawer(BuildContext context) {
     return Drawer(
@@ -24,9 +21,11 @@ class ProductAdminPage extends StatelessWidget {
             leading: Icon(Icons.shop),
             title: Text('All Product'),
             onTap: () {
-              Navigator.pushReplacementNamed(context, '/products');
+              Navigator.pushReplacementNamed(context, '/');
             },
-          )
+          ),
+          Divider(),
+          LogoutListTile(),
         ],
       ),
     );
@@ -52,10 +51,7 @@ class ProductAdminPage extends StatelessWidget {
           ),
         ),
         body: TabBarView(
-          children: <Widget>[
-            ProductEditPage(addProduct: addProduct),
-            ProductListPage(products, updateProduct, deleteProduct)
-          ],
+          children: <Widget>[ProductEditPage(), ProductListPage(model)],
         ),
       ),
     );

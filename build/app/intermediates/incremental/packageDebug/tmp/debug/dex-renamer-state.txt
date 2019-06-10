@@ -1,4 +1,4 @@
-#Thu Jun 06 11:30:53 IST 2019
-base.0=/home/govind/development/first_app/build/app/intermediates/transforms/dexMerger/debug/0
+#Mon Jun 10 16:17:55 IST 2019
+base.0=/home/govind/development/flutter-app-for-practice/build/app/intermediates/transforms/dexMerger/debug/0
 path.0=classes.dex
 renamed.0=classes.dex

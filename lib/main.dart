@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:scoped_model/scoped_model.dart';
 
 import './pages/auth.dart';
 import './pages/product_admin.dart';
 import './pages/products.dart';
 import './pages/product.dart';
+import './scoped-models/main.dart';
+import './models/produc.dart';
 
 void main() => runApp(MyApp());
 
@@ -15,63 +18,67 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  List<Map<String, dynamic>> _products = [];
-
-  void _addProduct(Map<String, dynamic> product) {
-    setState(() {
-      _products.add(product);
+  final MainModel _model = MainModel();
+  bool _isAuthenticated = false;
+  @override
+  void initState() {
+    _model.autoAuthenticte();
+    _model.userSubject.listen((bool isAuthenticated) {
+      setState(() {
+        _isAuthenticated = isAuthenticated;
+      });
     });
-  }
-
-  void _deleteProduct(int index) {
-    setState(() {
-      _products.removeAt(index);
-    });
-  }
-
-  void _updateProduct(int index, Map<String, dynamic> product) {
-    setState(() {
-      _products[index] = product;
-    });
+    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: ThemeData(
-        brightness: Brightness.light,
-        primarySwatch: Colors.deepOrange,
-        accentColor: Colors.deepPurple,
-        buttonColor: Colors.deepPurple,
-        fontFamily: 'Oswald',
-      ),
-      routes: {
-        '/': (BuildContext context) => AuthPage(),
-        '/products': (BuildContext context) => ProductsPage(_products),
-        '/admin': (BuildContext context) =>
-            ProductAdminPage(_addProduct, _updateProduct, _deleteProduct, _products),
-      },
-      onGenerateRoute: (RouteSettings settings) {
-        final List<String> pathElement = settings.name.split('/');
-        if (pathElement[0] != '') {
+    return ScopedModel<MainModel>(
+      model: _model,
+      child: MaterialApp(
+        theme: ThemeData(
+          brightness: Brightness.light,
+          primarySwatch: Colors.deepOrange,
+          accentColor: Colors.deepPurple,
+          buttonColor: Colors.deepPurple,
+          fontFamily: 'Oswald',
+        ),
+        routes: {
+          '/': (BuildContext context) =>
+              !_isAuthenticated ? AuthPage() : ProductsPage(_model),
+          '/admin': (BuildContext context) =>
+              !_isAuthenticated ? AuthPage() : ProductAdminPage(_model),
+        },
+        onGenerateRoute: (RouteSettings settings) {
+          if (!_isAuthenticated) {
+            return MaterialPageRoute<bool>(
+              builder: (BuildContext context) => AuthPage(),
+            );
+          }
+          final List<String> pathElement = settings.name.split('/');
+          if (pathElement[0] != '') {
+            return null;
+          }
+          if (pathElement[1] == 'product') {
+            final String productId = pathElement[2];
+            final Product product =
+                _model.allProducts.firstWhere((Product product) {
+              return product.id == productId;
+            });
+            _model.selectProduct(productId);
+            return MaterialPageRoute<bool>(
+              builder: (BuildContext context) =>
+                  !_isAuthenticated ? AuthPage() : ProductPage(product),
+            );
+          }
           return null;
-        }
-        if (pathElement[1] == 'product') {
-          final int index = int.parse(pathElement[2]);
-          return MaterialPageRoute<bool>(
-            builder: (BuildContext context) => ProductPage(
-                _products[index]['title'],
-                _products[index]['image'],
-                _products[index]['price'],
-                _products[index]['description']),
-          );
-        }
-        return null;
-      },
-      onUnknownRoute: (RouteSettings settings) {
-        return MaterialPageRoute(
-            builder: (BuildContext context) => ProductsPage(_products));
-      },
+        },
+        onUnknownRoute: (RouteSettings settings) {
+          return MaterialPageRoute(
+              builder: (BuildContext context) =>
+                  !_isAuthenticated ? AuthPage() : ProductsPage(_model));
+        },
+      ),
     );
   }
 }

@@ -2,13 +2,12 @@ import 'package:flutter/material.dart';
 
 import '../widget/ui_elements/title_default.dart';
 
-class ProductPage extends StatelessWidget {
-  final String title;
-  final String imageUrl;
-  final String price;
-  final String description;
+import '../models/produc.dart';
 
-  ProductPage(this.title, this.imageUrl, this.price, this.description);
+class ProductPage extends StatelessWidget {
+  final Product product;
+
+  ProductPage(this.product);
 
   _showAlertDialogue(BuildContext context) {
     showDialog(
@@ -36,7 +35,7 @@ class ProductPage extends StatelessWidget {
         });
   }
 
-  Widget _buildAddressPriceRow() {
+  Widget _buildAddressPriceRow(double price) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
@@ -68,23 +67,28 @@ class ProductPage extends StatelessWidget {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: Text(title),
+          title: Text(product.title),
         ),
         body: Center(
           child: Column(
             // mainAxisAlignment: MainAxisAlignment.center,
             // crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              Image.asset(imageUrl),
+              FadeInImage(
+                image: NetworkImage(product.image),
+                placeholder: AssetImage('assets/food.jpg'),
+                height: 300.0,
+                fit: BoxFit.cover,
+              ),
               Container(
                 padding: EdgeInsets.all(10.0),
-                child: TitleDefault(title),
+                child: TitleDefault(product.title),
               ),
-              _buildAddressPriceRow(),
+              _buildAddressPriceRow(product.price),
               Container(
                 padding: EdgeInsets.all(10.0),
                 child: Text(
-                  description,
+                  product.description,
                   textAlign: TextAlign.center,
                 ),
               ),
